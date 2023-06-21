@@ -357,9 +357,9 @@ int LoRaWANClass::getChannelFreq(unsigned char channel)
     else if(channel==2)return 921200000;
     else if(channel==3)return 921800000;
     else if(channel==4)return 922000000;
-    else if(channel==5)return 922200000;
-    else if(channel==6)return 922400000;
-    else if(channel==7)return 922600000;
+    else if(channel==5)return 922800000;
+    else if(channel==6)return 923200000;
+    else if(channel==7)return 923400000;
 }
 
 
@@ -375,9 +375,9 @@ int LoRaWANClass::getChannelRxFreq(unsigned char channel)
     else if(channel==2)return 921200000;
     else if(channel==3)return 921800000;
     else if(channel==4)return 922000000;
-    else if(channel==5)return 922200000;
-    else if(channel==6)return 922400000;
-    else if(channel==7)return 922600000;
+    else if(channel==5)return 922800000;
+    else if(channel==6)return 923200000;
+    else if(channel==7)return 923400000;
 }
 
 unsigned char LoRaWANClass::getDataRate() {
