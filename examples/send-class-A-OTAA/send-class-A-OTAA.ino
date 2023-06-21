@@ -10,7 +10,7 @@
    please buy us a round!
    Distributed as-is; no warranty is given.
 */
-#include <lorawan.h>
+#include <lorawanz.h>
 
 // OTAA credentials
 const char *devEui = "229b373ddffb7dAA";
@@ -20,6 +20,7 @@ const char *appKey = "your-access-key";
 const unsigned long interval = 10000;    // 10 s interval to send message
 unsigned long previousMillis = 0;  // will store last time message sent
 unsigned int counter = 0;     // message counter
+bool forceUp = true;
 
 char myStr[50];
 byte outStr[255];
@@ -28,10 +29,11 @@ int port, channel, freq;
 bool newmessage = false;
 
 const sRFM_pins RFM_pins = {
+  .loraHSPI = false,
   .CS = 5,
-  .RST = 0,
-  .DIO0 = 27,
-  .DIO1 = 2,
+  .RST = 4,
+  .DIO0 = 32,
+  .DIO1 = 33,
 };
 
 void setup() {
@@ -78,7 +80,7 @@ void setup() {
 
 void loop() {
   // Check interval overflow
-  if (millis() - previousMillis > interval) {
+  if (millis() - previousMillis > interval || forceUp) {
     previousMillis = millis();
 
     sprintf(myStr, "Lora Counter-%d", counter);

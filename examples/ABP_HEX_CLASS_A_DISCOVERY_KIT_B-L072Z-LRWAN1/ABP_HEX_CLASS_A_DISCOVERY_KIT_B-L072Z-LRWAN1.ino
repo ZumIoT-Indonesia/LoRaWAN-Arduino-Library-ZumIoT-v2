@@ -10,7 +10,7 @@
    please buy us a round!
    Distributed as-is; no warranty is given.
 */
-#include <lorawan.h>
+#include <lorawanz.h>
 
 //ABP Credentials
 const char *devAddr = "db48c21b";
@@ -21,6 +21,7 @@ const char *appSKey = "000000000000000002e21425cc8ccfa2";
 const unsigned long interval = 10000;    // 10 s interval to send message
 unsigned long previousMillis = 0;  // will store last time message sent
 unsigned int counter = 0;     // message counter
+bool forceUp = true;
 
 char myStr[50];
 byte outStr[255];
@@ -29,6 +30,7 @@ int port, channel, freq;
 bool newmessage = false;
 
 const sRFM_pins RFM_pins = {
+  .loraHSPI = false,
   .CS = PA15,
   .RST = PC0,
   .DIO0 = PB4,
@@ -73,7 +75,7 @@ void setup() {
 
 void loop() {
   // Check interval overflow
-  if (millis() - previousMillis > interval) {
+  if (millis() - previousMillis > interval || forceUp) {
     previousMillis = millis();
 
 
