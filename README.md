@@ -1,29 +1,29 @@
 ![LibraryBuild](https://github.com/BeelanMX/Beelan-LoRaWAN/workflows/LibraryBuild/badge.svg?branch=master)
 
-Arduino LoRaWAN library by Beelan
+Arduino LoRaWAN library by Beelan for ZumIoT
 ====================
 This repository contains the simple LoRaWAN library originally created by Ideetron B.V. This library is slightly
 modified and encapsulated to run in the generic platform, allowing using the SX1272, SX1276 transceivers and compatible modules (such as some HopeRF RFM9x modules).
 
-This repository is all based on this [repo]( https://git.antares.id/lorawan-loraid/arduino-loraid), with the principal purpose to port it to the frequencies of indonesia AS923.
+This repository is all based on this [repo]( https://git.antares.id/lorawan-loraid/arduino-loraid), with the principal purpose to port it to the frequencies of indonesia AS923_2 with extra channel 923.2 and 923.4.
 
 To find out how to use the library itself, see the examples, or see the PDF file in the doc subdirectory.
 
 **THIS LIBRARY IS USING AS923 ONLY**
 Frequency Used
 --------------
-- 921.2 MHz
 - 921.4 MHz
 - 921.6 MHz
+- 921.2 MHz
 - 921.8 MHz
 - 922.0 MHz
 - 922.8 MHz
-- 921.2 MHz
-- 921.4 MHz
+- 923.2 MHz (extra channel)
+- 923.4 MHz (extra channel)
 
-Data Rate Used
+Data Rate Used for Downlink and Uplink (Default)
 --------------
-DR3 = SF9BW125
+DR2 = SF10BW125
 
 Frame Port Used
 ---------------
@@ -31,17 +31,15 @@ Frame Port Tx = 5
 
 Features
 --------
-The arduino LoRaWAN library supports LoRaWAN Class A and Class C implementations operating in EU-868, AS-923 and US-915 bands. Note that this library is fairly simple with the aim of demonstrating the LoRaWAN capabilities.
+The arduino LoRaWAN library supports LoRaWAN Class A and Class C implementations operating in AS-923-2 bands. Note that this library is fairly simple with the aim of demonstrating the LoRaWAN capabilities.
 
 What certainly works:
- - Sending packets uplink, taking into account duty cycling.
+ - Sending packets uplink, taking into account duty cycling. --> ABP
  - Custom frequencies and datarate settings.
- - Receiving downlink packets in the RX1 window (EU_868, AS923,US_915).
- - Over-the-air activation (OTAA / joining) (EU_868, AS923).
+ - Receiving downlink packets in the RX1 window (AS923-2). --> ABP
+ - Over-the-air activation (OTAA / joining) (AS923-2). --> STILL ERROR
  - Class C operation.
- - Receiving downlink packets in the RX1 window (US_915).
  - Receiving downlink packets in the RX2 window.
- - Over-the-air activation (OTAA / joining) (US_915). 
 
 What has not been tested:
  - Receiving and processing MAC commands.
@@ -49,35 +47,13 @@ What has not been tested:
 If you try one of these untested features and it works, be sure to let
 us know (creating a github issue is probably the best way for that).
 
-Quick Installing
+Installing
 ----------
-To install, use the Arduino Library Manager and search for "Beelan LoraWAN" and install the library.
-
-Manual Installing
-----------
-To install this library:
-
- - install it using the Arduino Library manager ("Sketch" -> "Include
-   Library" -> "Manage Libraries..."), or
- - download a zipfile from github using the "Download ZIP" button and
-   install it using the IDE ("Sketch" -> "Include Library" -> "Add .ZIP
-   Library..."
- - clone this git repository into your sketchbook/libraries folder.
-
-For more info, see https://www.arduino.cc/en/Guide/Libraries
-
+To install, DOWNLOAD THE LIBRARY, UNZIP IT, AND COPY TO Arduino/libraries
 
 Configuration
 -------------
-A number of features can be configured or disabled by editing the
-`config.h` file in the library folder. Unfortunately the Arduino
-environment does not offer any way to do this (compile-time)
-configuration from the sketch, so be careful to recheck your
-configuration when you switch between sketches or update the library.
-
-At the very least, you should set the right type of board in config.h, most other values should be fine at their defaults.
-
-When using the US_915 you need to select which sub-band you will use, by default it is sub-band 6.
+Only for AS923-2 with extra channel 923.2 and 923.4
 
 Supported hardware
 ------------------
@@ -335,7 +311,7 @@ void setup() {
 ### Set Data Rate
 You can set data rate allowed in your region (AS_923, EU_868 or US915).
 
-##	For AS923 or EU868
+##	For AS923
 | data_rate | Name | Config          |Direction
 |-----------|------|-----------------|----------------
 | 0         | DR0  | SF12 BW 125 KHz | Uplink/Downlink
@@ -346,26 +322,6 @@ You can set data rate allowed in your region (AS_923, EU_868 or US915).
 | 5         | DR5  | SF7 BW 125 KHz  | Uplink/Downlink
 | 6         | DR6  | SF7 BW 250 KHz  | Uplink/Downlink
 
-## For US915
-| data_rate    | Name  | Config          | Direction   
-|--------------|-------|-----------------|----------
-| 0            | DR0   | SF10 BW 125 KHz | Uplink
-| 1            | DR1   | SF9 BW 125 KHz | Uplink
-| 2            | DR2   | SF8 BW 125 KHz | Uplink
-| 3            | DR3   | SF7 BW 125 KHz  | Uplink
-| 4            | DR4   | SF8 BW 500 KHz  | Uplink
-| 5:7  	     | RFU   | 		N/A		    | N/A
-| 8            | DR8   | SF12 BW 500 KHz  | Downlink
-| 9            | DR9   | SF11 BW 500 KHz  | Downlink
-| 10           | DR10  | SF10 BW 500 KHz  | Downlink
-| 11           | DR11  | SF9 BW 500 KHz  | Downlink
-| 12           | DR12  | SF8 BW 500 KHz  | Downlink
-| 13           | DR13  | SF7 BW 500 KHz  | Downlink
-
-For US915 is important to remark that DR0-DR4 are only for UPLINKS
-and DR8-DR10 are only for DOWNLINKS
-
-*RFU: Reserved for future use
 
 ### Syntax
 ```c
@@ -461,21 +417,16 @@ void loop() {
 }
 ```
 
-Examples
---------
-This library currently provides two examples:
-
- - `send-class-A_B-ABP.ino` shows basic usage of Class A_B ABP activation.
- - `send-class-A_B-OTAA.ino` shows basic usage of Class A_B OTAA activation.
-
 Tests
 -------
- - See [Test Folder](test/README.md) 
+ - See [Examples](examples/) 
 
 Maintainer
 -------
 
 Beelan invests time and resources providing this open source design, please support Beelan!
+
+Nur Ardli Rachmat S / envyst
 
 License
 -------
