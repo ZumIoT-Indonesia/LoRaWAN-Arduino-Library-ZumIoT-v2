@@ -5,9 +5,29 @@ Arduino LoRaWAN library by Beelan
 This repository contains the simple LoRaWAN library originally created by Ideetron B.V. This library is slightly
 modified and encapsulated to run in the generic platform, allowing using the SX1272, SX1276 transceivers and compatible modules (such as some HopeRF RFM9x modules).
 
-This repository is all based on this [repo]( https://git.antares.id/lorawan-loraid/arduino-loraid), with the principal purpose to port it to the frequencies of america US915.
+This repository is all based on this [repo]( https://git.antares.id/lorawan-loraid/arduino-loraid), with the principal purpose to port it to the frequencies of indonesia AS923.
 
 To find out how to use the library itself, see the examples, or see the PDF file in the doc subdirectory.
+
+**THIS LIBRARY IS USING AS923 ONLY**
+Frequency Used
+--------------
+- 921.2 MHz
+- 921.4 MHz
+- 921.6 MHz
+- 921.8 MHz
+- 922.0 MHz
+- 922.8 MHz
+- 921.2 MHz
+- 921.4 MHz
+
+Data Rate Used
+--------------
+DR3 = SF9BW125
+
+Frame Port Used
+---------------
+Frame Port Tx = 5
 
 Features
 --------
@@ -100,9 +120,16 @@ Pin mapping
 As described above, most connections can use arbitrary I/O pins on the
 Arduino side. To tell the arduino LoRaWAN library about these, a pin mapping struct is used in the sketch file.
 
+***ADDED**
+Support ESP32 HSPI and VSPI with variable .loraHSPI as parameter
+- .loraHSPI = false -> Using VSPI
+- .loraHSPI = true  -> Using HSPI
+* **loraHSPI must defined**
+
 For example, this could look like this:
 
 	sRFM_pins RFM_pins = {
+        .loraHSPI = false,
 	  	.CS = SS,
 	  	.RST = RFM_RST,
 	  	.DIO0 = RFM_DIO0,
@@ -164,7 +191,7 @@ Setup device address for activating the device.
 
 #### Syntax
 ```c
-void setDevAddr(unsigned char *devAddr_in);
+void setDevAddr(String devAddr_in);
 ```
 
 #### Example
