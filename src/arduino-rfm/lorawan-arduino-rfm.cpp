@@ -128,7 +128,14 @@ bool LoRaWANClass::init(void)
     digitalWrite(RFM_pins.RST,HIGH);
 
     //Initialise the SPI port
+    #ifdef ESP32
+    if(RFM_pins.loraHSPI)
+        SPIH.begin();
+    else
+        SPI.begin();
+    #else
     SPI.begin();
+    #endif
     
     /*** This prevents the use of other SPI devices with different settings ***/
     //SPI.beginTransaction(SPISettings(4000000,MSBFIRST,SPI_MODE0)); 

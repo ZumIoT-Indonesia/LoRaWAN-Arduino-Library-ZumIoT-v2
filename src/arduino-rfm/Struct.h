@@ -38,6 +38,7 @@
 */
 
 struct sRFM_pins{
+    bool loraHSPI;
     int CS;
     int RST;
     int DIO0;

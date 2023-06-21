@@ -31,6 +31,11 @@
 #include "RFM95.h"
 #include "Config.h"
 
+//make it for ESP32
+#ifdef ESP32
+  SPIClass SPIH(HSPI);
+#endif
+
 /**
  *  Lora Frequencies
  */
@@ -65,6 +70,46 @@ static unsigned char RFM_Read(unsigned char RFM_Address)
 {
   unsigned char RFM_Data;
 
+  #ifdef ESP32
+  if(RFM_pins.loraHSPI)
+  {
+    //Add transactions in Read and Write methods
+    SPIH.beginTransaction(SPISettings(4000000,MSBFIRST,SPI_MODE0));
+    
+    //Set NSS pin low to start SPI communication
+    digitalWrite(RFM_pins.CS,LOW);
+
+    //Send Address
+    SPIH.transfer(RFM_Address);
+    //Send 0x00 to be able to receive the answer from the RFM
+    RFM_Data = SPIH.transfer(0x00);
+
+    //Set NSS high to end communication
+    digitalWrite(RFM_pins.CS,HIGH);
+
+    //End the transaction so that other hardware can use the bus
+    SPIH.endTransaction();
+  }
+  else
+  {
+    //Add transactions in Read and Write methods
+    SPI.beginTransaction(SPISettings(4000000,MSBFIRST,SPI_MODE0));
+    
+    //Set NSS pin low to start SPI communication
+    digitalWrite(RFM_pins.CS,LOW);
+
+    //Send Address
+    SPI.transfer(RFM_Address);
+    //Send 0x00 to be able to receive the answer from the RFM
+    RFM_Data = SPI.transfer(0x00);
+
+    //Set NSS high to end communication
+    digitalWrite(RFM_pins.CS,HIGH);
+
+    //End the transaction so that other hardware can use the bus
+    SPI.endTransaction();
+  }
+  #else
   //Add transactions in Read and Write methods
   SPI.beginTransaction(SPISettings(4000000,MSBFIRST,SPI_MODE0));
   
@@ -81,6 +126,7 @@ static unsigned char RFM_Read(unsigned char RFM_Address)
 
   //End the transaction so that other hardware can use the bus
   SPI.endTransaction();
+  #endif
 
   #ifdef DEBUG
   Serial.print("SPI Read ADDR: ");
@@ -429,6 +475,46 @@ void RFM_Write(unsigned char RFM_Address, unsigned char RFM_Data)
     Serial.println(RFM_Data, HEX);
   #endif
 
+  #ifdef ESP32
+  if(RFM_pins.loraHSPI)
+  {
+    //Add transactions in Read and Write methods
+    SPIH.beginTransaction(SPISettings(4000000,MSBFIRST,SPI_MODE0));
+
+    //Set NSS pin Low to start communication
+    digitalWrite(RFM_pins.CS,LOW);
+
+    //Send Address with MSB 1 to make it a writ command
+    SPIH.transfer(RFM_Address | 0x80);
+    //Send Data
+    SPIH.transfer(RFM_Data);
+
+    //Set NSS pin High to end communication
+    digitalWrite(RFM_pins.CS,HIGH);
+
+    //End the transaction so that other hardware can use the bus
+    SPIH.endTransaction();
+  }
+  else
+  {
+    //Add transactions in Read and Write methods
+    SPI.beginTransaction(SPISettings(4000000,MSBFIRST,SPI_MODE0));
+
+    //Set NSS pin Low to start communication
+    digitalWrite(RFM_pins.CS,LOW);
+
+    //Send Address with MSB 1 to make it a writ command
+    SPI.transfer(RFM_Address | 0x80);
+    //Send Data
+    SPI.transfer(RFM_Data);
+
+    //Set NSS pin High to end communication
+    digitalWrite(RFM_pins.CS,HIGH);
+
+    //End the transaction so that other hardware can use the bus
+    SPI.endTransaction();
+  }
+  #else
   //Add transactions in Read and Write methods
   SPI.beginTransaction(SPISettings(4000000,MSBFIRST,SPI_MODE0));
 
@@ -445,6 +531,7 @@ void RFM_Write(unsigned char RFM_Address, unsigned char RFM_Data)
 
   //End the transaction so that other hardware can use the bus
   SPI.endTransaction();
+  #endif
 }
 
 /*
