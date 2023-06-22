@@ -105,6 +105,7 @@ void loop() {
   recvStatus = lora.readDataByte(outStr);
 
   if (recvStatus) {
+    Serial.println();
     newmessage = true;
     int counter = 0;
     port = lora.getFramePortRx();
