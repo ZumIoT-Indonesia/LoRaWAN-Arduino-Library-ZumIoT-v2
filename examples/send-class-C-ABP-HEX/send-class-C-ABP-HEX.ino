@@ -73,6 +73,7 @@ void loop() {
   // Check interval overflow
   if (millis() - previousMillis > interval || forceUp) {
     previousMillis = millis();
+    forceUp = false;
 
 
     byte myByte[] = {0xFF, 0xA2, 0x33, 0xD4, 0x55};

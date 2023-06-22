@@ -73,6 +73,7 @@ void loop() {
   // Check interval overflow
   if (millis() - previousMillis > interval || forceUp) {
     previousMillis = millis();
+    forceUp = false;
 
     sprintf(myStr, "Lora Counter-%d", counter++);
 
